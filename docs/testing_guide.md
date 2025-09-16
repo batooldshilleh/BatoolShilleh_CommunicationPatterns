@@ -275,7 +275,10 @@ curl -X PUT http://localhost:5070/api/orders/1/status \
 ```
 
 **Screenshot Placeholder:**
-![Update Order Status GIF](./asset/f2/update_order_status.gif)
+<video width="600" controls>
+  <source src="./asset/f2/Screencast from 2025-09-16 22-33-54.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 **Negative Test Case:**
 
