@@ -275,7 +275,7 @@ curl -X PUT http://localhost:5070/api/orders/1/status \
 ```
 
 **Screenshot Placeholder:**
-![Update Order Status Terminal Screenshot](./asset/f2/Screencast%20from%202025-09-16%2022-33-54.mp4)
+![Update Order Status GIF](./asset/f2/update_order_status.gif)
 
 **Negative Test Case:**
 
