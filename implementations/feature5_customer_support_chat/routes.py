@@ -8,7 +8,7 @@ bp = Blueprint('feature5_chat', __name__, url_prefix='/api/chat')
 @socketio.on('join_chat')
 def handle_join_chat(data):
     room_id = data.get('room_id')
-    user_type = data.get('user_type')  # 'customer' أو 'agent'
+    user_type = data.get('user_type')  
     join_room(str(room_id))
     emit('status', {'msg': f'{user_type} joined room {room_id}'}, room=str(room_id))
 
@@ -18,12 +18,10 @@ def handle_send_message(data):
     sender_type = data['sender_type']
     content = data['content']
 
-    # حفظ الرسالة في قاعدة البيانات
     msg = ChatMessage(room_id=room_id, sender_type=sender_type, content=content)
     db.session.add(msg)
     db.session.commit()
 
-    # بث الرسالة فوراً لكل من في الغرفة
     emit('new_message', {
         'id': msg.id,
         'sender_type': sender_type,

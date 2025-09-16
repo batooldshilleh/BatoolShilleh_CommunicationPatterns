@@ -5,14 +5,12 @@ from app import db, socketio
 
 bp = Blueprint('feature4', __name__)
 
-# الموظفين ينضمون لغرفة المطعم
 @socketio.on("join_restaurant_room")
 def join_restaurant(data):
     """
     data = {"restaurant_id": int, "staff_id": int}
     """
     restaurant_id = data.get("restaurant_id")
-    # تحقق من وجود المطعم
     restaurant = Restaurant.query.get(restaurant_id)
     if not restaurant:
         emit("error", {"message": "Invalid restaurant"})
@@ -22,7 +20,6 @@ def join_restaurant(data):
     join_room(room)
     emit("joined", {"message": f"Joined restaurant {restaurant_id} room"})
 
-# الموظفين يغادرون الغرفة
 @socketio.on("leave_restaurant_room")
 def leave_restaurant(data):
     restaurant_id = data.get("restaurant_id")
@@ -30,7 +27,6 @@ def leave_restaurant(data):
     leave_room(room)
     emit("left", {"message": f"Left restaurant {restaurant_id} room"})
 
-# عند إنشاء طلب جديد، أرسل إشعار لكل الموظفين
 def notify_new_order(order):
     """
     order: Order instance
