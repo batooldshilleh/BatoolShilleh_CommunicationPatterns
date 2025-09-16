@@ -30,7 +30,7 @@ curl -X POST http://localhost:5070/api/auth/register \
 ```
 
 **Screenshot Placeholder:**
-![Register Terminal Screenshot](image.png)
+![Register Terminal Screenshot](docs/asset/f1/image.png)
 
 **Negative Test Case:**
 
@@ -50,7 +50,7 @@ curl -X POST http://localhost:5070/api/auth/register \
 
 **Screenshot Placeholder:**
 
-![Register Duplicate Terminal Screenshot](image-1.png)
+![Register Duplicate Terminal Screenshot](docs/asset/f1/image-1.png)
 ---
 
 ### 2. Login Existing User
@@ -76,7 +76,7 @@ curl -X POST http://localhost:5070/api/auth/login \
 
 **Screenshot Placeholder:**
 
-![Login Terminal Screenshot](image-2.png)
+![Login Terminal Screenshot](docs/asset/f1/image-2.png)
 **Negative Test Case:**
 
 * Use unregistered email:
@@ -95,7 +95,7 @@ curl -X POST http://localhost:5070/api/auth/login \
 
 **Screenshot Placeholder:**
 
-![Login Invalid Terminal Screenshot](image-3.png)
+![Login Invalid Terminal Screenshot](docs/asset/f1/image-3.png)
 ---
 
 ### 3. Update User Profile
@@ -116,7 +116,7 @@ curl -X PUT http://localhost:5070/api/auth/update-profile/<user_id> \
 ```
 
 **Screenshot Placeholder:**
-![Update Profile Terminal Screenshot](image-4.png)
+![Update Profile Terminal Screenshot](docs/asset/f1/image-4.png)
 
 **Negative Test Case:**
 
@@ -131,6 +131,6 @@ curl -X PUT http://localhost:5070/api/auth/update-profile/9999 \
 * **Expected Result:** HTTP 404 Not Found
 
 **Screenshot Placeholder:**
-![Update Profile Invalid Terminal Screenshot](image-5.png)
+![Update Profile Invalid Terminal Screenshot](docs/asset/f1/image-5.png)
 ---
 
