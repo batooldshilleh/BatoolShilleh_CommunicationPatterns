@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:15
+    container_name: foodfast_db
+    restart: always
+    environment:
+      POSTGRES_USER: foodfast_user
+      POSTGRES_PASSWORD: securepassword
+      POSTGRES_DB: foodfast_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
