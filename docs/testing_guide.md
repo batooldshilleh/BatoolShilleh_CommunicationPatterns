@@ -50,7 +50,7 @@ curl -X POST http://localhost:5070/api/auth/register \
 
 **Screenshot Placeholder:**
 
-![Register Duplicate Terminal Screenshot](docs/asset/f1/image-1.png)
+![Register Duplicate Terminal Screenshot](./asset/f1/image-1.png)
 ---
 
 ### 2. Login Existing User
