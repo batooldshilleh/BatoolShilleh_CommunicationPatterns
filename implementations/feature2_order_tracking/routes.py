@@ -6,9 +6,34 @@ from implementations.feature4_restaurant_notifications.routes import notify_new_
 
 bp = Blueprint('feature2', __name__)
 
-# Long Polling status
+
+@bp.route("/api/restaurants", methods=["POST"])
+def create_restaurant():
+    """
+    JSON body:
+    {
+        "name": "<restaurant_name>"
+    }
+    """
+    data = request.get_json()
+    name = data.get("name")
+    if not name:
+        return jsonify({"error": "Restaurant name is required"}), 400
+
+    from app.models import Restaurant
+
+    restaurant = Restaurant(name=name)
+    db.session.add(restaurant)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Restaurant created successfully",
+        "restaurant_id": restaurant.id,
+        "name": restaurant.name
+    }), 201
+
 @bp.route("/api/orders/<int:order_id>/status", methods=["GET"])
-def get_order_status(order_id):  # ← يجب أن يكون order_id هنا
+def get_order_status(order_id):      
     order = Order.query.get_or_404(order_id)
     last_status = request.args.get("last_status", "")
 
@@ -24,17 +49,24 @@ def get_order_status(order_id):  # ← يجب أن يكون order_id هنا
 
     return jsonify({"order_id": order.id, "status": order.status})
 
-# Create new order
 @bp.route("/api/orders", methods=["POST"])
 def create_order():
     data = request.get_json()
     user_id = data.get("user_id")
-    restaurant_id = data.get("restaurant_id")  # يجب تمرير المطعم
+    restaurant_id = data.get("restaurant_id") 
+
+    from app.models import User, Restaurant
+    user = User.query.get(user_id)
+    restaurant = Restaurant.query.get(restaurant_id)
+
+    if not user or not restaurant:
+        return jsonify({"error": "User or Restaurant not found"}), 404
+
     order = Order(user_id=user_id, restaurant_id=restaurant_id, status="Confirmed")
     db.session.add(order)
     db.session.commit()
 
-    # أرسل إشعار للموظفين
+   
     notify_new_order(order)
 
     return jsonify({
@@ -42,6 +74,7 @@ def create_order():
         "order_id": order.id,
         "status": order.status
     }), 201
+
 
 @bp.route("/api/orders/<int:order_id>/status", methods=["PUT"])
 def update_order_status(order_id):

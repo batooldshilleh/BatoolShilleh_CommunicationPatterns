@@ -134,3 +134,164 @@ curl -X PUT http://localhost:5070/api/auth/update-profile/9999 \
 ![Update Profile Invalid Terminal Screenshot](./asset/f1/image-5.png)
 ---
 
+# Feature 2: Order Tracking
+
+**Endpoints Tested:**
+
+* `POST /api/restaurants`
+* `POST /api/orders`
+* `GET /api/orders/<order_id>/status`
+* `PUT /api/orders/<order_id>/status`
+
+---
+
+### 1. Create a Restaurant
+
+**Test Steps:**
+
+1. Run in terminal:
+
+```bash
+curl -X POST http://localhost:5070/api/restaurants \
+-H "Content-Type: application/json" \
+-d '{"name":"Test Restaurant"}'
+```
+
+2. Expected output:
+
+```json
+{
+  "message": "Restaurant created successfully",
+  "restaurant_id": 1,
+  "name": "Test Restaurant"
+}
+```
+
+**Screenshot Placeholder:**
+![Create Restaurant Terminal Screenshot](./asset/f2/image.png)
+
+**Negative Test Case:**
+
+* Missing name field:
+
+```bash
+curl -X POST http://localhost:5070/api/restaurants \
+-H "Content-Type: application/json" \
+-d '{}'
+```
+
+* **Expected Result:**
+
+```json
+{"error": "Restaurant name is required"}
+```
+**Screenshot Placeholder:**
+![Create Restaurant Negative Test Case Terminal Screenshot](./asset/f2/image%20copy.png)
+
+---
+
+### 2. Create a New Order
+
+**Test Steps:**
+
+1. Run in terminal (replace `<user_id>` and `<restaurant_id>` with actual IDs):
+
+```bash
+curl -X POST http://localhost:5070/api/orders \
+-H "Content-Type: application/json" \
+-d '{"user_id":1,"restaurant_id":1}'
+```
+
+2. Expected output:
+
+```json
+{
+  "message": "Order created successfully",
+  "order_id": 1,
+  "status": "Confirmed"
+}
+```
+
+**Screenshot Placeholder:**
+![Create Order Terminal Screenshot](./asset/f2/image%20copy%202.png)
+
+**Negative Test Case:**
+
+* Invalid user or restaurant ID:
+
+```bash
+curl -X POST http://localhost:5070/api/orders \
+-H "Content-Type: application/json" \
+-d '{"user_id":999,"restaurant_id":1}'
+```
+
+* **Expected Result:**
+
+```json
+{"error": "User or Restaurant not found"}
+```
+**Screenshot Placeholder:**
+![Create Order Negative Test Case Terminal Screenshot](./asset/f2/image%20copy%203.png)
+
+---
+
+### 3. Get Order Status (Long Polling)
+
+**Test Steps:**
+
+1. Run in terminal:
+
+```bash
+curl -X GET "http://localhost:5070/api/orders/1/status?last_status=Pending"
+```
+
+2. Expected output:
+
+```json
+{"order_id": 1, "status": "Confirmed"}
+```
+
+**Screenshot Placeholder:**
+![Get Order Status Terminal Screenshot](./asset/f2/image%20copy%204.png)
+
+---
+
+### 4. Update Order Status
+
+**Test Steps:**
+
+1. Run in terminal:
+
+```bash
+curl -X PUT http://localhost:5070/api/orders/1/status \
+-H "Content-Type: application/json" \
+-d '{"status":"Delivered"}'
+```
+
+2. Expected output:
+
+```json
+{"order_id": 1, "status": "Delivered"}
+```
+
+**Screenshot Placeholder:**
+![Update Order Status Terminal Screenshot](./asset/f2/Screencast%20from%202025-09-16%2022-33-54.mp4)
+
+**Negative Test Case:**
+
+* Missing status field:
+
+```bash
+curl -X PUT http://localhost:5070/api/orders/1/status \
+-H "Content-Type: application/json" \
+-d '{}'
+```
+
+* **Expected Result:**
+
+```json
+{"error": "Missing status"}
+```
+![Update Order Status Negative Test Case Terminal Screenshot](./asset/f2/image%20copy%205.png)
+---
+

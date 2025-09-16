@@ -8,6 +8,7 @@ class User(db.Model):
     orders = db.relationship('Order', backref='user', lazy=True)
 
 class Order(db.Model):
+   
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
