@@ -275,10 +275,8 @@ curl -X PUT http://localhost:5070/api/orders/1/status \
 ```
 
 **Screenshot Placeholder:**
-<video width="600" controls>
-  <source src="./asset/f2/Screencast from 2025-09-16 22-33-54.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[Watch the video](./asset/f2/Screencast%20from%202025-09-16%2022-33-54.mp4)
+
 
 **Negative Test Case:**
 
