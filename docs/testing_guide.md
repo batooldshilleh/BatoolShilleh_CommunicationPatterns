@@ -404,7 +404,7 @@ sio.emit("update_driver_location", {"lat":40.7128,"lng":-74.0060})
   ```
 
 ---
-
+---
 ## Feature 4: Restaurant Notifications (Socket.IO)
 
 **Purpose:**
@@ -517,4 +517,221 @@ Left restaurant 1 room: {'message': 'Left restaurant 1 room'}
 * Make sure `notify_new_order` in `routes.py` uses `socketio.emit` instead of `flask_socketio.emit` in request context to avoid `Request.namespace` errors.
 
 
+
+Got it! Here’s **Feature 5 – Customer Support Chat** in the same style and format as your other features, in **English**, terminal-based testing, without embedding the client Python code directly.
+
+---
+
+## Feature 5: Customer Support Chat (Socket.IO)
+
+**Purpose:**
+Enable real-time chat between customers and support agents using Socket.IO and `ChatRoom`s.
+
+**Endpoints / Events Tested:**
+
+* HTTP:
+
+  * `POST /api/chat/create_room` – create a new chat room
+
+* Socket.IO events:
+
+  * `join_chat` – join a chat room
+  * `send_message` – send a message
+  * `typing` – indicate typing
+  * `delivered` – confirm message delivery
+
+---
+
+### 1. Start the Server
+
+Run the Flask + Socket.IO server:
+
+```bash
+python wsgi.py
+```
+
+**Expected Output:**
+
+```
+ * Running on http://127.0.0.1:5070
+ * SocketIO initialized
+```
+
+**Screenshot Placeholder:**
+![Server Terminal Screenshot](./asset/f5/server.png)
+
+---
+
+### 2. Create a Chat Room
+
+**Test Steps:**
+
+1. Open terminal and run:
+
+```bash
+curl -X POST http://127.0.0.1:5070/api/chat/create_room \
+-H "Content-Type: application/json" \
+-d '{"customer_id":1,"agent_id":2}'
+```
+
+2. **Expected Output:**
+
+```json
+{"room_id":1}
+```
+
+**Screenshot Placeholder:**
+![Create Chat Room Terminal Screenshot](./asset/f5/image.png)
+
+**Negative Test Case:**
+
+* Missing `customer_id`:
+
+```bash
+curl -X POST http://127.0.0.1:5070/api/chat/create_room \
+-H "Content-Type: application/json" \
+-d '{"agent_id":2}'
+```
+
+* **Expected Result:**
+
+```json
+{"error":"customer_id is required"}
+```
+
+**Screenshot Placeholder:**
+![Create Room Negative Terminal Screenshot](./asset/f5/image%20copy.png)
+
+---
+
+### 3. Join a Chat Room
+
+**Test Steps:**
+
+1. In a separate terminal, start a Socket.IO client (or a test script) and emit:
+
+```bash
+# Using socket.io client or Python test script
+sio.emit("join_chat", {"room_id":1,"user_type":"customer"})
+```
+
+2. **Expected Result:** Terminal shows:
+
+```
+Connected to server
+Status: {'msg': 'customer joined room 1'}
+```
+
+**Screenshot Placeholder:**
+![Join Chat Room Terminal Screenshot](./asset/f5/image%20copy%202.png)
+
+**Negative Test Case:**
+
+* Join a non-existent room:
+
+```bash
+sio.emit("join_chat", {"room_id":999,"user_type":"customer"})
+```
+
+* **Expected Result:**
+
+```
+Error: {'message': 'Room not found'}
+```
+
+
+
+---
+
+### 4. Send a Message
+
+**Test Steps:**
+
+1. In the same client terminal, emit:
+
+```bash
+sio.emit("send_message", {
+    "room_id":1,
+    "sender_type":"customer",
+    "content":"Hello, I need help!"
+})
+```
+
+2. **Expected Result:** All participants in the room receive:
+
+```json
+{
+  "id": 1,
+  "sender_type": "customer",
+  "content": "Hello, I need help!",
+  "created_at": "2025-09-17T19:30:00"
+}
+```
+
+**Screenshot Placeholder:**
+![Send Message Terminal Screenshot](./asset/f5/image%20copy%202.png)
+
+**Negative Test Case:**
+
+* Send message without `room_id`:
+
+```bash
+sio.emit("send_message", {"sender_type":"customer","content":"Hi"})
+```
+
+* **Expected Result:**
+
+```
+Error: {'message':'room_id is required'}
+```
+
+
+---
+
+### 5. Typing Notification
+
+**Test Steps:**
+
+1. Emit typing event:
+
+```bash
+sio.emit("typing", {"room_id":1,"user_type":"customer"})
+```
+
+2. **Expected Result:** Other participants see:
+
+```
+Typing: {'user_type':'customer'}
+```
+
+**Screenshot Placeholder:**
+![Typing Terminal Screenshot](./asset/f5/image%20copy%203.png)
+
+---
+
+### 6. Message Delivery Confirmation
+
+**Test Steps:**
+
+1. Emit delivered event for a message:
+
+```bash
+sio.emit("delivered", {"message_id":1})
+```
+
+2. **Expected Result:** Room participants receive:
+
+```json
+{"message_id":1}
+```
+
+---
+
+### Notes
+
+* Rooms must exist in the database before clients can join and send messages.
+* Use terminal-based clients or Python Socket.IO test scripts to simulate multiple users.
+* Ensure the server is running before testing any Socket.IO events.
+
+---
 

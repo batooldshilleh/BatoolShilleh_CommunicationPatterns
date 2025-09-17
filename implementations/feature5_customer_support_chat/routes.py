@@ -1,9 +1,30 @@
 from flask import Blueprint, request
 from flask_socketio import join_room, leave_room, emit
 from app import db, socketio
-from  app.models import ChatRoom, ChatMessage
+from  app.models import ChatRoom, ChatMessage, User
 
 bp = Blueprint('feature5_chat', __name__, url_prefix='/api/chat')
+
+@bp.route('/create_room', methods=['POST'])
+def create_room():
+    data = request.json
+    agent_id = data.get('agent_id')
+    
+    # تحقق من وجود العميل
+    customer = User.query.get(data['customer_id'])
+    if not customer:
+        return {'error': 'Customer not found'}, 400
+    
+    # تحقق من وجود الوكيل إذا تم تمريره
+    if agent_id:
+        agent = User.query.get(agent_id)
+        if not agent:
+            return {'error': 'Agent not found'}, 400
+    
+    room = ChatRoom(customer_id=customer.id, agent_id=agent_id)
+    db.session.add(room)
+    db.session.commit()
+    return {'room_id': room.id}, 201
 
 @socketio.on('join_chat')
 def handle_join_chat(data):
