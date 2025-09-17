@@ -516,3 +516,5 @@ Left restaurant 1 room: {'message': 'Left restaurant 1 room'}
 * This feature relies on a running Socket.IO server.
 * Make sure `notify_new_order` in `routes.py` uses `socketio.emit` instead of `flask_socketio.emit` in request context to avoid `Request.namespace` errors.
 
+
+
