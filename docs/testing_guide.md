@@ -297,7 +297,7 @@ curl -X PUT http://localhost:5070/api/orders/1/status \
 ---
 
 
-# Feature 3: Real-Time Driver Location (Socket.IO)
+## Feature 3: Real-Time Driver Location (Socket.IO)
 
 **Purpose:**
 Send and receive driver GPS coordinates in real time using WebSocket with Socket.IO.
@@ -404,3 +404,121 @@ sio.emit("update_driver_location", {"lat":40.7128,"lng":-74.0060})
   ```
 
 ---
+
+
+
+تمام! هنا أضفت Feature 4 بنفس **structure** لبقية الفيتشارز مع خطوات الاختبار بالترمنال، مع `Socket.IO client` و`curl` لإنشاء الطلبات.
+
+---
+
+## Feature 4: Restaurant Notifications (Socket.IO)
+
+**Purpose:**
+Notify restaurant staff in real-time whenever a new order is created using WebSocket (Socket.IO).
+
+**Endpoints / Events Tested:**
+
+* Socket.IO events:
+
+  * `join_restaurant_room`
+  * `leave_restaurant_room`
+  * `new_order` (emitted by server)
+
+---
+
+### 1. Start the Server
+
+Run the Flask + Socket.IO server:
+
+```bash
+python wsgi.py
+```
+
+**Expected Output:**
+
+```
+ * Running on http://127.0.0.1:5070
+ * SocketIO initialized
+```
+
+**Screenshot Placeholder:**
+![Server Terminal Screenshot](./asset/f4/image.png)
+
+---
+
+### 2. Start a Restaurant Client
+
+
+Run the client in a separate terminal:
+
+```bash
+python implementations/feature4_restaurant_notifications/test_restaurant_client.py
+```
+
+**Expected Output:**
+
+```
+Connected to server
+Joined restaurant room: {'message': 'Joined restaurant 1 room'}
+```
+
+**Screenshot Placeholder:**
+![Restaurant Client Terminal Screenshot](./asset/f4/image.png)
+
+---
+
+### 3. Trigger a New Order (via `curl`)
+
+In another terminal, create a new order:
+
+```bash
+curl -X POST http://127.0.0.1:5070/api/orders \
+-H "Content-Type: application/json" \
+-d '{"user_id":1,"restaurant_id":1}'
+```
+
+**Expected Output on Client Terminal:**
+
+```
+New order received: {'order_id': 1, 'user_id': 1, 'status': 'Confirmed', 'created_at': '2025-09-17 18:50:00'}
+```
+
+
+---
+
+### 4. Negative Test Cases
+
+**a) Join with Invalid Restaurant ID**
+
+```python
+sio.emit("join_restaurant_room", {"restaurant_id": 999, "staff_id": 1})
+```
+
+**Expected Output:**
+
+```
+Error: {'message': 'Invalid restaurant'}
+```
+
+**b) Leave Restaurant Room**
+
+```python
+sio.emit("leave_restaurant_room", {"restaurant_id": 1})
+```
+
+**Expected Output:**
+
+```
+Left restaurant 1 room: {'message': 'Left restaurant 1 room'}
+```
+
+**Screenshot Placeholder:**
+![Leave Room Terminal Screenshot](./asset/f4/image.png)
+
+---
+
+### Notes
+
+* This feature relies on a running Socket.IO server.
+* Make sure `notify_new_order` in `routes.py` uses `socketio.emit` instead of `flask_socketio.emit` in request context to avoid `Request.namespace` errors.
+

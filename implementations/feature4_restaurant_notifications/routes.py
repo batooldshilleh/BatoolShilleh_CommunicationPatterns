@@ -32,9 +32,10 @@ def notify_new_order(order):
     order: Order instance
     """
     room = f"restaurant_{order.restaurant_id}"
-    emit("new_order", {
+    socketio.emit("new_order", {
         "order_id": order.id,
         "user_id": order.user_id,
         "status": order.status,
         "created_at": str(order.created_at)
     }, room=room)
+
