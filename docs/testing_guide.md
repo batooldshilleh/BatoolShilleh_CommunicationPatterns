@@ -405,12 +405,6 @@ sio.emit("update_driver_location", {"lat":40.7128,"lng":-74.0060})
 
 ---
 
-
-
-تمام! هنا أضفت Feature 4 بنفس **structure** لبقية الفيتشارز مع خطوات الاختبار بالترمنال، مع `Socket.IO client` و`curl` لإنشاء الطلبات.
-
----
-
 ## Feature 4: Restaurant Notifications (Socket.IO)
 
 **Purpose:**
