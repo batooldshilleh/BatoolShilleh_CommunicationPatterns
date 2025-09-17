@@ -134,7 +134,7 @@ curl -X PUT http://localhost:5070/api/auth/update-profile/9999 \
 ![Update Profile Invalid Terminal Screenshot](./asset/f1/image-5.png)
 ---
 
-# Feature 2: Order Tracking
+## Feature 2: Order Tracking
 
 **Endpoints Tested:**
 
@@ -296,3 +296,111 @@ curl -X PUT http://localhost:5070/api/orders/1/status \
 ![Update Order Status Negative Test Case Terminal Screenshot](./asset/f2/image%20copy%205.png)
 ---
 
+
+# Feature 3: Real-Time Driver Location (Socket.IO)
+
+**Purpose:**
+Send and receive driver GPS coordinates in real time using WebSocket with Socket.IO.
+
+---
+
+### 1. Start the Server
+
+1. Make sure the server is running with **eventlet**:
+
+   ```bash
+   gunicorn -k eventlet -w 1 -b 0.0.0.0:8000 wsgi:app
+   ```
+2. Confirm in the terminal that it is listening on `http://0.0.0.0:8000`.
+
+**Screenshot Placeholder:**
+![Server Terminal Screenshot](./asset/f3/server.png)
+
+---
+
+### 2. Join an Order Room
+
+**Test Steps:**
+
+1. In a new terminal window run the test client:
+
+   ```bash
+   python implementations/feature3_driver_location/test_client.py
+   ```
+
+   Make sure `test_client.py` contains:
+
+   ```python
+   sio.connect("http://127.0.0.1:8000")
+   sio.emit("join_order_room", {"order_id": 2, "user_id": 1})
+   ```
+
+2. **Expected Result:**
+   Terminal output shows:
+
+   ```
+   Connected to server
+   Joined room: {"order_id":2,"user_id":1}
+   ```
+
+**Screenshot Placeholder:**
+![Join Room Terminal Screenshot](./asset/f3/image.png)
+
+---
+
+### 3. Send Driver Location
+
+**Test Steps:**
+
+1. After joining the room, emit the driver’s location (inside `test_client.py` or another terminal):
+
+   ```python
+   sio.emit("update_driver_location",
+            {"order_id": 2, "lat": 40.7128, "lng": -74.0060})
+   ```
+
+2. **Expected Result (on client or other listeners):**
+
+   ```
+   Driver location: {"order_id":2,"lat":40.7128,"lng":-74.0060}
+   ```
+
+**Screenshot Placeholder:**
+![Driver Location Terminal Screenshot](./asset/f3/image.png)
+
+---
+
+### 4. Negative Test
+
+*Send coordinates without `order_id`:*
+
+```python
+sio.emit("update_driver_location", {"lat":40.7128,"lng":-74.0060})
+```
+
+* **Expected Result:**
+  Error message in terminal:
+
+  ```
+  Error: {"message":"order_id is required"}
+  ```
+
+---
+
+### Notes
+
+* **Without Redis (development):**
+
+  ```bash
+  export USE_REDIS=false
+  gunicorn -k eventlet -w 1 -b 0.0.0.0:8000 wsgi:app
+  ```
+
+* **With Redis (production or scaling):**
+
+  ```bash
+  export USE_REDIS=true
+  gunicorn -k eventlet -w 2 -b 0.0.0.0:8000 wsgi:app
+  ```
+
+---

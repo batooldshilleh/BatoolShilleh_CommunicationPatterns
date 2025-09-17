@@ -4,7 +4,7 @@ from flask_socketio import SocketIO
 
 db = SQLAlchemy()
 
-socketio = SocketIO(cors_allowed_origins="*", message_queue="redis://localhost:6379")  
+socketio = SocketIO(cors_allowed_origins="*")
 
 def create_app():
     app = Flask(__name__)

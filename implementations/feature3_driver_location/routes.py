@@ -1,17 +1,14 @@
-from flask import Blueprint, request, jsonify
+# file: implementations/feature3_driver_location/routes.py
+from flask import Blueprint
 from flask_socketio import SocketIO, join_room, leave_room, emit
-from app.models import Order, Driver
+from app.models import Order
 from app import db, socketio
 
 bp = Blueprint('feature3', __name__)
 
-# WebSocket namespace for driver location updates
 @socketio.on("join_order_room")
 def join_order(data):
-    """
-    Customer joins the room to receive driver location updates.
-    data = {"order_id": int, "user_id": int}
-    """
+    print("join_order_room received:", data)
     order_id = data.get("order_id")
     user_id = data.get("user_id")
     order = Order.query.get(order_id)
@@ -31,12 +28,9 @@ def leave_order(data):
     leave_room(room)
     emit("left", {"message": f"Left room for order {order_id}"})
 
-# Driver sends location updates
 @socketio.on("update_driver_location")
 def update_driver_location(data):
-    """
-    data = {"order_id": int, "lat": float, "lng": float}
-    """
+    print("update_driver_location received:", data)
     order_id = data.get("order_id")
     lat = data.get("lat")
     lng = data.get("lng")
@@ -47,5 +41,4 @@ def update_driver_location(data):
         return
 
     room = f"order_{order_id}"
-    # Broadcast location to the customer in this room
     emit("driver_location", {"lat": lat, "lng": lng}, room=room)
